@@ -46,10 +46,18 @@ class KotakLogin:
 
                 if chromedriver_path:
                     self.logger.info(f"Using system chromedriver at {chromedriver_path}")
-                    self.driver = webdriver.Chrome(
-                        service=Service(chromedriver_path),
-                        options=options
-                    )
+                    try:
+                        self.driver = webdriver.Chrome(
+                            service=Service(chromedriver_path),
+                            options=options
+                        )
+                    except Exception as e:
+                        self.logger.warning(f"System chromedriver failed to start: {e}. Falling back to webdriver-manager.")
+                        driver_path = ChromeDriverManager().install()
+                        self.driver = webdriver.Chrome(
+                            service=Service(driver_path),
+                            options=options
+                        )
                 else:
                     # Fallback to webdriver-manager
                     self.logger.info("No system chromedriver found; using webdriver-manager to download one")
@@ -95,9 +103,25 @@ class KotakLogin:
             time.sleep(2)
             
             # Wait for login page to load
-            WebDriverWait(self.driver, EXPLICIT_WAIT).until(
-                EC.presence_of_element_located((By.NAME, 'uid'))
-            )
+            try:
+                WebDriverWait(self.driver, EXPLICIT_WAIT).until(
+                    EC.presence_of_element_located((By.NAME, 'uid'))
+                )
+            except Exception as e:
+                self.logger.error(f"Form field 'uid' not found within {EXPLICIT_WAIT}s: {e}")
+                self.logger.info("Current page URL: " + self.driver.current_url)
+                self.logger.info("Page title: " + self.driver.title)
+                
+                # Take screenshot for debugging
+                screenshot_path = "login_page_debug.png"
+                self.driver.save_screenshot(screenshot_path)
+                self.logger.info(f"Screenshot saved to {screenshot_path}")
+                
+                # Log page source snippet
+                page_source = self.driver.page_source
+                if page_source:
+                    self.logger.info(f"Page source (first 500 chars): {page_source[:500]}")
+                raise
             
             # Enter phone number
             username_field = self.driver.find_element(By.NAME, 'uid')

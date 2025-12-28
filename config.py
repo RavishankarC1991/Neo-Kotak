@@ -13,7 +13,7 @@ KOTAK_LOGIN_URL = 'https://ntrade.kotaksecurities.com/Login'
 KOTAK_PORTFOLIO_URL = 'https://ntrade.kotaksecurities.com/dashboard/holdings'
 
 # Selenium Configuration
-BROWSER = 'chrome'  # or 'firefox'
+BROWSER = 'chrome'  # or 'firefox' or 'safari'
 IMPLICIT_WAIT = 10  # seconds
 EXPLICIT_WAIT = 15  # seconds
 HEADLESS = False  # Set to True to run in headless mode
