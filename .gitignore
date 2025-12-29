@@ -14,7 +14,8 @@ kotak_analyzer.log
 .vscode/
 drivers/
 .pytest_cache/
-node_modules/.env
+node_modules/
+screenshots/.env
 *.log
 *.png
 analysis_report_*.json

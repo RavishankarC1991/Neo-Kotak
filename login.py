@@ -6,6 +6,8 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
 import time
+from datetime import datetime
+import os
 from config import KOTAK_LOGIN_URL, KOTAK_PHONE_NUMBER, KOTAK_PASSWORD, BROWSER, IMPLICIT_WAIT, EXPLICIT_WAIT, HEADLESS
 from logger import get_logger
 
@@ -112,8 +114,14 @@ class KotakLogin:
                 self.logger.info("Current page URL: " + self.driver.current_url)
                 self.logger.info("Page title: " + self.driver.title)
                 
-                # Take screenshot for debugging
-                screenshot_path = "login_page_debug.png"
+                # Create screenshots folder if it doesn't exist
+                screenshots_dir = "screenshots"
+                if not os.path.exists(screenshots_dir):
+                    os.makedirs(screenshots_dir)
+                
+                # Take screenshot with timestamp
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                screenshot_path = os.path.join(screenshots_dir, f"login_debug_{timestamp}.png")
                 self.driver.save_screenshot(screenshot_path)
                 self.logger.info(f"Screenshot saved to {screenshot_path}")
                 
